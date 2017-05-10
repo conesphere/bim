@@ -1,0 +1,99 @@
+#!/bin/bash
+
+# memo:
+# dashboard_entry=()
+# dashboard_enable=()
+# dashboard_reply=()
+# dashboard_reply_help=()
+
+# ordering: 
+# /usr/share/bim/
+# /usr/local/share/bim/
+# /etc/bashboard/
+# /home/${USER}/bim/
+
+PREFIX="${0%/bin/*}"
+export PREFIX
+BIMMODULES="./modules ${PREFIX}/share/bim/modules /etc/bim/modules ${HOME}/.bim/modules"
+
+# configure functions 
+bim_show() {
+	MENUSTR=$(declare -p "${1}_entry")
+	TOPICSTR=$(declare -p "${1}_topic")
+	ENABLESTR=$(declare -p "${1}_enable")
+	REPLYSTR=$(declare -p "${1}_reply")
+	REPLYHELPSTR=$(declare -p "${1}_reply_help")
+	shift
+	PS3="
+selection (? for help) ---> "
+	declare -A MENU=${MENUSTR#*=}
+	declare -A TOPIC=${TOPICSTR#*=}
+	declare -A ENABLE=${ENABLESTR#*=}
+	declare -A REPLYDICT=${REPLYSTR#*=}
+	declare -A REPLYHELP=${REPLYHELPSTR#*=}
+	REPLYDICT["q"]="exit"
+	REPLYDICT["r"]="break"
+	REPLYDICT["<"]="break"
+	if [[ -n "${TOPIC}" ]]
+	then
+		echo 
+		echo "${TOPIC}"
+	fi
+	echo
+	select item in "${!MENU[@]}"
+	do
+		if [[ -z "${item}" ]] 
+		then
+			# get all args except for the reply cmd 
+			ARGS=(${REPLY})
+			REPLY="${ARGS[0]}"
+			ARGS="${ARGS[@]:1}"
+			if [[ -n ${REPLYDICT["${REPLY}"]} ]]
+			then
+				${REPLYDICT["${REPLY}"]} "${ARGS[@]}" || echo "reply command failed, returncode $?"
+			fi
+			if [[ -n "${REPLY}" == ? ]]
+			then
+				echo Here should be some help
+			fi
+		fi
+		if [[ -n ${MENU["${item}"]} ]]
+		then 
+			${MENU["${item}"]} "${@}"|| echo "menu command failed, returncode $?"
+		fi
+	done
+}
+
+
+###################################
+# lookup and load modules 
+for searchpath in ${BIMMODULES}
+do
+	if [[ -d "${searchpath}" ]]
+	then
+		for module in "${searchpath}/"*
+		do
+			if [[ -d "${module}" ]]
+			then
+				for part in "${searchpath}/${module}/"*
+				do
+					if [[ -f "${part}" ]]
+					then
+						. "${part}"
+					fi
+				done
+			else
+				. "${module}"
+			fi
+		done
+	fi
+done
+
+#############################
+# start 
+menuname="${1}"
+menuname=${menuname:=dashboard}
+shift
+bim_show "${menuname}" "${@}"
+
+
