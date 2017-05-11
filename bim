@@ -92,7 +92,7 @@ do
 		do
 			if [[ -d "${module}" ]]
 			then
-				for part in "${searchpath}/${module}/"*
+				for part in "${searchpath}/${module}/"*.bim
 				do
 					if [[ -f "${part}" ]]
 					then
@@ -100,7 +100,10 @@ do
 					fi
 				done
 			else
-				. "${module}"
+				if [[ "${module}" = *.bim ]]
+				then
+					. "${module}"
+				fi
 			fi
 		done
 	fi
