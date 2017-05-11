@@ -8,7 +8,12 @@ MODULESDIR=share/bim/modules
 LIBDIR=share/bim/modules
 
 # variables used by make 
-TARGETS=$(addprefix $(DESTDIR)$(PREFIX)/$(LIBDIR)/,$(wildcard lib/*/*.bim)) $(addprefix $(DESTDIR)$(PREFIX)/$(MODULESDIR)/,$(wildcard modules/*/*.bim)) $(addprefix $(DESTDIR)$(PREFIX)/bin/,bim)
+TARGETS=\
+   $(addprefix $(DESTDIR)$(PREFIX)/$(LIBDIR)/,$(wildcard lib/*.bim))\
+   $(addprefix $(DESTDIR)$(PREFIX)/$(LIBDIR)/,$(wildcard lib/*/*.bim))\
+   $(addprefix $(DESTDIR)$(PREFIX)/$(MODULESDIR)/,$(wildcard modules/*.bim))\
+   $(addprefix $(DESTDIR)$(PREFIX)/$(MODULESDIR)/,$(wildcard modules/*/*.bim))\
+   $(addprefix $(DESTDIR)$(PREFIX)/bin/,bim)
 DEPS=bash
 
 all:
@@ -44,17 +49,17 @@ uninstall:  $(TARGETS)
 	@echo done
 
 $(DESTDIR)$(PREFIX)/$(LIBDIR)/%.bim: %.bim
-	install -d $(DESTDIR)$(PREFIX)/$(LIBDIR)
+	install -d $(dir $@)
 	#shellcheck $<
 	install $< $@
 
 $(DESTDIR)$(PREFIX)/$(MODULESDIR)/%.bim: %.bim
-	install -d $(DESTDIR)$(PREFIX)/$(MODULESDIR)
+	install -d $(dir $@)
 	#shellcheck $<
 	install $< $@
 
 $(DESTDIR)$(PREFIX)/bin/bim: bim
-	install -d $(DESTDIR)$(PREFIX)/bin
+	install -d $(dir $@)
 	#shellcheck -x $<
 	install $< $@
 
