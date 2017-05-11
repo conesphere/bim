@@ -12,7 +12,7 @@ declare -A dashboard_reply+=(
 )
 
 declare -A dashboard_reply_help+=(
-	["esc"]="echo got seq esc"
+	["esc"]="prints out got seq esc"
 )
 
 declare dashboard_topic=("BIM Dashboard")
