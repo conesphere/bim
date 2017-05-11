@@ -39,7 +39,7 @@ selection (? for help) ---> "
 	if [[ -n "${TOPIC}" ]]
 	then
 		echo 
-		echo "${TOPIC}"
+		echo "${TOPIC[@]}"
 	fi
 	echo
 	select item in "${!MENU[@]}"
@@ -63,7 +63,7 @@ selection (? for help) ---> "
 			if [[ "${REPLY}" = "?" ]]
 			then
 				echo ""
-				echo "This is Help for Menu:    ${TOPIC}"
+				echo "This is Help for Menu:    ${TOPIC[@]}"
 				echo ""
 				echo "You might also use the following commands:"
 				echo ""
