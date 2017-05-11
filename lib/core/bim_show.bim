@@ -1,6 +1,10 @@
 #!/bin/bash
 
-# configure functions 
+# bim_show "menuname" 
+# shows a select menu for bim on the screen 
+# it tries to get some globally defined hashes and arrays 
+# defining the menu options, and prints that menu, together 
+# with some extra opts back to the user. 
 bim_show() {
 	MENUSTR=$(declare -p "${1}_entry")
 	TOPICSTR=$(declare -p "${1}_topic")
@@ -59,7 +63,12 @@ selection (? for help) ---> "
 		else
 			if [[ -n ${MENU["${item}"]} ]]
 			then 
-				${MENU["${item}"]} "${@}"|| echo "menu command failed, returncode $?"
+				if [[ -z "${@}" ]]
+				then
+					${MENU["${item}"]} || echo "menu command failed, returncode $?"
+				else
+					${MENU["${item}"]} "${@}"|| echo "menu command failed, returncode $?"
+				fi
 			fi
 		fi
 	done

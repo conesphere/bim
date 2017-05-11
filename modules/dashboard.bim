@@ -1,19 +1,12 @@
 #!/bin/bash
 
-declare -A dashboard_entry+=(
-	["Say Hello World"]="echo Hello World"
-	["ls -l"]="ls -l"
-)
+declare -A dashboard_entry+=()
 
 declare -A dashboard_enable+=()
 
-declare -A dashboard_reply+=(
-	["esc"]="echo got seq esc"
-)
+declare -A dashboard_reply+=() 
 
-declare -A dashboard_reply_help+=(
-	["esc"]="prints out got seq esc"
-)
+declare -A dashboard_reply_help+=()
 
 declare dashboard_topic=("BIM Dashboard")
 
