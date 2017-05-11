@@ -16,72 +16,6 @@ PREFIX="${0%/bin/*}"
 export PREFIX
 BIMMODULES="./modules ${PREFIX}/share/bim/modules /etc/bim/modules ${HOME}/.bim/modules"
 
-# configure functions 
-bim_show() {
-	MENUSTR=$(declare -p "${1}_entry")
-	TOPICSTR=$(declare -p "${1}_topic")
-	ENABLESTR=$(declare -p "${1}_enable")
-	REPLYSTR=$(declare -p "${1}_reply")
-	REPLYHELPSTR=$(declare -p "${1}_reply_help")
-	shift
-	PS3="
-selection (? for help) ---> "
-	declare -A MENU=${MENUSTR#*=}
-	declare -A TOPIC=${TOPICSTR#*=}
-	declare -A ENABLE=${ENABLESTR#*=}
-	declare -A REPLYDICT=${REPLYSTR#*=}
-	declare -A REPLYHELP=${REPLYHELPSTR#*=}
-	REPLYDICT["q"]="exit"
-	REPLYDICT["r"]="break"
-	REPLYHELP["r"]="Leave this Menu (return)"
-	REPLYHELP["q"]="Leave the Program (quit)"
-	REPLYHELP["?"]="This Help"
-	if [[ -n "${TOPIC}" ]]
-	then
-		echo 
-		echo "${TOPIC[@]}"
-	fi
-	echo
-	select item in "${!MENU[@]}"
-	do
-		if [[ -z "${item}" ]] 
-		then
-			# get all args except for the reply cmd 
-			AREPLY=(${REPLY})
-			REPLY="${AREPLY[0]}"
-			ARGS="${AREPLY[@]:1}"
-			if [[ -n ${REPLYDICT["${REPLY}"]} ]]
-			then
-				if [[ -z "${ARGS}" ]]
-				then
-					${REPLYDICT["${REPLY}"]} || echo "reply command failed, returncode $?"
-				else
-					${REPLYDICT["${REPLY}"]} "${ARGS[@]}" || echo "reply command failed, returncode $?"
-				fi
-			fi
-			# print the help here
-			if [[ "${REPLY}" = "?" ]]
-			then
-				echo ""
-				echo "This is Help for Menu:    ${TOPIC[@]}"
-				echo ""
-				echo "You might also use the following commands:"
-				echo ""
-				for opt in "${!REPLYHELP[@]}"
-				do
-					echo "${opt}	${REPLYHELP[${opt}]}"
-				done
-			fi
-		else
-			if [[ -n ${MENU["${item}"]} ]]
-			then 
-				${MENU["${item}"]} "${@}"|| echo "menu command failed, returncode $?"
-			fi
-		fi
-	done
-}
-
-
 ###################################
 # lookup and load modules 
 for searchpath in ${BIMMODULES}
@@ -92,7 +26,7 @@ do
 		do
 			if [[ -d "${module}" ]]
 			then
-				for part in "${searchpath}/${module}/"*.bim
+				for part in "${module}/"*.bim
 				do
 					if [[ -f "${part}" ]]
 					then
