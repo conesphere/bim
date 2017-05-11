@@ -7,14 +7,14 @@
 # dashboard_reply_help=()
 
 # ordering: 
-# /usr/share/bim/
-# /usr/local/share/bim/
-# /etc/bashboard/
-# /home/${USER}/bim/
+# /usr/local/lib/bim/
+# /usr/local/share/bim/modules
+# /etc/bim/modules/
+# /home/${USER}/.bim/modules
 
 PREFIX="${0%/bin/*}"
 export PREFIX
-BIMMODULES="./modules ${PREFIX}/share/bim/modules /etc/bim/modules ${HOME}/.bim/modules"
+BIMMODULES="${PREFIX}/lib/bim ${PREFIX}/share/bim/modules /etc/bim/modules ${HOME}/.bim/modules ./lib ./modules"
 
 ###################################
 # lookup and load modules 
