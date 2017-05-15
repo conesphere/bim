@@ -1,0 +1,24 @@
+#!/bin/bash
+
+# ask user if he is sure....
+bim_yesno() {
+	if [[ -z "${@}" ]]
+	then
+		msg="Are you sure?"
+	else
+		msg="${@}"
+	fi
+	while true
+	do
+		echo "${msg}"
+		read -e -p "yes or no? > " -r yesno
+		if [[ "${yesno}" = "yes" ]]
+		then
+			return 0
+		elif [[ "${yesno}" = "no" ]] 
+			return 1
+		else
+			echo "Pleas type exactly yes or no!"
+		fi
+	done
+}
