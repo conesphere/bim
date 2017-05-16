@@ -1,0 +1,13 @@
+#!/bin/bash
+
+bim_shell() {
+	echo 
+	echo "Starting bim debug shell prompt"
+	echo "use return to get back to bim menu"
+	echo 
+	while true
+	do
+		read -e -p "bim ${PWD##*/}/ > " -a cmdline
+		${cmdline[@]}
+	done
+}
