@@ -46,8 +46,10 @@ selection (? for help) ---> "
 	# configure reply defaults (only ? is hardcoded)
 	REPLYDICT["q"]="exit"
 	REPLYDICT["r"]="break"
+	REPLYDICT["sh"]="bim_shell"
 
 	# configure default help text for q r and ? 
+	REPLYHELP["sh"]="show a debug shell prompt"
 	REPLYHELP["r"]="Leave this Menu (return)"
 	REPLYHELP["q"]="Leave the Program (quit)"
 	REPLYHELP["?"]="This Help"
