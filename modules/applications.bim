@@ -1,0 +1,19 @@
+#!/bin/bash
+
+declare -A dashboard_entry+=(
+	["Applications"]="bim_show bim_applications"
+)
+
+declare -x -A bim_applications_entry+=(
+	["start bim in screen"]="bim_start_screen"
+	["alpine E-Mail Program"]="alpine"
+	["vfu File Manager"]="vfu"
+	["Browse the Web with lynx"]="lynx"
+)
+
+bim_start_screen() {
+	SHELL=$(which bim)
+	screen -R -d
+	unset SHELL
+}
+
