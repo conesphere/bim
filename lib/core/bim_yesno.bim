@@ -16,6 +16,7 @@ bim_yesno() {
 		then
 			return 0
 		elif [[ "${yesno}" = "no" ]] 
+		then
 			return 1
 		else
 			echo "Pleas type exactly yes or no!"

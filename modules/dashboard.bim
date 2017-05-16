@@ -4,14 +4,16 @@
 # your bim application might use it for other things, too
 ###############################################
 
-declare -A dashboard_entry+=()
+#declare -A dashboard_entry+=()
 
-declare -A dashboard_enable+=()
+#declare -A dashboard_enable+=()
 
-declare -A dashboard_reply+=() 
+#declare -A dashboard_reply+=() 
 
-declare -A dashboard_reply_help+=()
+#declare -A dashboard_reply_help+=()
 
 declare dashboard_topic=("BIM Dashboard")
 
-
+dashboard() {
+	bim_show dashboard
+}

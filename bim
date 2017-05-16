@@ -48,6 +48,6 @@ done
 menuname="${1}"
 menuname=${menuname:=dashboard}
 shift
-bim_show "${menuname}" "${@}"
+"${menuname}" "${@}"
 
 
