@@ -34,6 +34,7 @@ selection (? for help) ---> "
 			if "${ENABLE[${entry#_*_ }]}"
 			then
 				# good entry is enabled 
+				echo -n 
 			else
 				continue
 			fi
