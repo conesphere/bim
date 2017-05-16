@@ -6,31 +6,58 @@
 # defining the menu options, and prints that menu, together 
 # with some extra opts back to the user. 
 bim_show() {
-	MENUSTR=$(declare -p "${1}_entry")
-	TOPICSTR=$(declare -p "${1}_topic")
-	ENABLESTR=$(declare -p "${1}_enable")
-	REPLYSTR=$(declare -p "${1}_reply")
-	REPLYHELPSTR=$(declare -p "${1}_reply_help")
+	MENUSTR=$(declare -p "${1}_entry" 2> /dev/null || echo "()")
+	TOPICSTR=$(declare -p "${1}_topic" 2> /dev/null || echo "()")
+	ENABLESTR=$(declare -p "${1}_enable" 2> /dev/null || echo "()")
+	REPLYSTR=$(declare -p "${1}_reply" 2> /dev/null || echo "()")
+	REPLYHELPSTR=$(declare -p "${1}_reply_help" 2> /dev/null || echo "()")
 	shift
 	PS3="
 selection (? for help) ---> "
-	declare -A MENU=${MENUSTR#*=}
-	declare -A TOPIC=${TOPICSTR#*=}
+	declare -A MENUDICT=${MENUSTR#*=}
+	declare -a TOPIC=${TOPICSTR#*=}
 	declare -A ENABLE=${ENABLESTR#*=}
 	declare -A REPLYDICT=${REPLYSTR#*=}
 	declare -A REPLYHELP=${REPLYHELPSTR#*=}
+
+	declare -a MENUKEYS=()
+	declare -a MENUSORTED=()
+	declare -A MENU=()
+	
+	IFS=$'\n' MENUSORTED=($(sort <<<"${!MENUDICT[*]}"))
+	unset IFS	
+
+	for entry in "${MENUSORTED[@]}"
+	do
+		if [[ -n "${ENABLE[${entry#_*_ }]}" ]]
+		then 
+			if "${ENABLE[${entry#_*_ }]}"
+			then
+				# good entry is enabled 
+			else
+				continue
+			fi
+		fi
+		MENUKEYS+=("${entry#_*_ }")
+		MENU["${entry#_*_ }"]="${MENUDICT[${entry}]}"
+	done
+
+	# configure reply defaults (only ? is hardcoded)
 	REPLYDICT["q"]="exit"
 	REPLYDICT["r"]="break"
+
+	# configure default help text for q r and ? 
 	REPLYHELP["r"]="Leave this Menu (return)"
 	REPLYHELP["q"]="Leave the Program (quit)"
 	REPLYHELP["?"]="This Help"
+
 	if [[ -n "${TOPIC}" ]]
 	then
 		echo 
 		echo "${TOPIC[@]}"
 	fi
 	echo
-	select item in "${!MENU[@]}"
+	select item in "${MENUKEYS[@]}"
 	do
 		if [[ -z "${item}" ]] 
 		then
