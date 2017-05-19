@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# HINT: 
+#  might print  "\033]0;SOMESTRING\007" to actually set xterm title
+
 # bim_show "menuname" 
 # shows a select menu for bim on the screen 
 # it tries to get some globally defined hashes and arrays 
