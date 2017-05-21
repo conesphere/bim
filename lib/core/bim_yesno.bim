@@ -2,6 +2,19 @@
 
 # ask user if he is sure....
 bim_yesno() {
+	while [[ "${1}" = -* ]] && [[ -n "${1}" ]]
+	do
+		if [[ ${1} == "-f" ]]
+		then
+			enforce="true"
+			shift
+			continue
+		fi
+		errcho "I dont understand parameter ${1}"
+		shift
+		continue
+	done
+
 	if [[ -z "${@}" ]]
 	then
 		msg="Are you sure?"
@@ -18,6 +31,15 @@ bim_yesno() {
 		elif [[ "${yesno}" = "no" ]] 
 		then
 			return 1
+		elif [[ "${yesno}" = y* ]] && [[ -z "${enforce}" ]]
+		then
+			return 0
+		elif [[ "${yesno}" = n* ]] && [[ -z "${enforce}" ]]
+		then
+			return 1
+		elif [[ -z "${enforce}" ]]
+		then
+			echo "Pleas type y(es) or n(o)!"
 		else
 			echo "Pleas type exactly yes or no!"
 		fi
