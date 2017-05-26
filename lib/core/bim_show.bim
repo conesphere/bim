@@ -9,13 +9,13 @@
 # defining the menu options, and prints that menu, together 
 # with some extra opts back to the user. 
 bim_show() {
-	BIM_MENUNAME="${1}"
+	local BIM_MENUNAME="${1}"
 	shift
-	BIM_SETUP_FUNC="${1}"
+	local BIM_SETUP_FUNC="${1}"
 	shift
-	BIM_CLEANUP_FUNC="${1}"
+	local BIM_CLEANUP_FUNC="${1}"
 	shift
-	RELOAD_MENU="true"
+	local RELOAD_MENU="true"
 	while [[ "${RELOAD_MENU}" = "true" ]]
 	do
 		RELOAD_MENU="false"
@@ -30,15 +30,15 @@ bim_show() {
 		REPLYHELPSTR=$(declare -p "${BIM_MENUNAME}_reply_help" 2> /dev/null || echo "()")
 		PS3="
 selection (? for help) ---> "
-		declare -A MENUDICT=${MENUSTR#*=}
-		declare -a TOPIC=${TOPICSTR#*=}
-		declare -A ENABLE=${ENABLESTR#*=}
-		declare -A REPLYDICT=${REPLYSTR#*=}
-		declare -A REPLYHELP=${REPLYHELPSTR#*=}
+		declare -x -A MENUDICT=${MENUSTR#*=}
+		declare -x -a TOPIC=${TOPICSTR#*=}
+		declare -x -A ENABLE=${ENABLESTR#*=}
+		declare -x -A REPLYDICT=${REPLYSTR#*=}
+		declare -x -A REPLYHELP=${REPLYHELPSTR#*=}
 
-		declare -a MENUKEYS=()
-		declare -a MENUSORTED=()
-		declare -A MENU=()
+		declare -x -a MENUKEYS=()
+		declare -x -a MENUSORTED=()
+		declare -x -A MENU=()
 		
 		IFS=$'\n' MENUSORTED=($(sort <<<"${!MENUDICT[*]}"))
 		unset IFS	
@@ -88,12 +88,12 @@ selection (? for help) ---> "
 				then
 					if [[ -z "${ARGS}" ]]
 					then
-						echo doing: ${REPLYDICT["${REPLY}"]}
 						${REPLYDICT["${REPLY}"]} || echo "reply command failed, returncode $?"
-						echo done: ${REPLYDICT["${REPLY}"]}
 					else
 						${REPLYDICT["${REPLY}"]} "${ARGS[@]}" || echo "reply command failed, returncode $?"
 					fi
+					RELOAD_MENU="true"
+					break
 				fi
 				# print the help here
 				if [[ "${REPLY}" = "?" ]]
@@ -107,19 +107,19 @@ selection (? for help) ---> "
 					do
 						echo "${opt}	${REPLYHELP[${opt}]}"
 					done
+					RELOAD_MENU="true"
+					break
 				fi
 			else
 				if [[ -n ${MENU["${item}"]} ]]
 				then 
 					${MENU["${item}"]} || echo "menu command failed, returncode $?"
-				else
-					echo "I have no configuration abt what to do, aka no menu entry fir ${item}"
+					RELOAD_MENU="true"
+					break
 				fi
 			fi
 			# last but not least we do start over with our menu and reload the complete thing 
 			RELOAD_MENU="true"
-			echo finish loop agn
-			break 
 		done
 	done
 	if [[ -n "${BIM_CLEANUP_FUNC}" ]] 
