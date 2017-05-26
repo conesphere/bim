@@ -40,14 +40,23 @@ selection (? for help) ---> "
 		declare -x -a MENUSORTED=()
 		declare -x -A MENU=()
 		
-		IFS=$'\n' MENUSORTED=($(sort <<<"${!MENUDICT[*]}"))
+		# this sorting is a bit more complicated because "[ ]" and "[X]" are sorted 
+		# differently, so we strip that from the string in the first place and later 
+		# to be efficient we do use the "entry enabled" check to recover that data. 
+		declare -x -A MENUUNSORTED=()
+		for entry in "${!MENUDICT[@]}"
+		do
+			MENUUNSORTED["${entry/\[X\]/[ ]}"]="${entry}"
+		done
+		IFS=$'\n' MENUSORTED=($(sort <<<"${!MENUUNSORTED[*]}"))
 		unset IFS	
 
 		for entry in "${MENUSORTED[@]}"
 		do
-			if [[ -n "${ENABLE[${entry#_*_ }]}" ]]
+			realentry="${MENUUNSORTED[${entry}]}"
+			if [[ -n "${ENABLE[${realentry}]}" ]]
 			then 
-				if "${ENABLE[${entry#_*_ }]}"
+				if "${ENABLE[${realentry}]}"
 				then
 					# good entry is enabled 
 					echo -n 
@@ -55,8 +64,8 @@ selection (? for help) ---> "
 					continue
 				fi
 			fi
-			MENUKEYS+=("${entry#_*_ }")
-			MENU["${entry#_*_ }"]="${MENUDICT[${entry}]}"
+			MENUKEYS+=("${realentry#_*_ }")
+			MENU["${realentry#_*_ }"]="${MENUDICT[${realentry}]}"
 		done
 
 		# configure reply defaults (only ? is hardcoded)
