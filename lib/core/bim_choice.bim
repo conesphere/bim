@@ -6,9 +6,8 @@
 #	["[ ] This is ur 2nd test choice"]="bim_test_choice"
 #)
 
-
 bim_choice() {
-   MENUSTR=$(declare -p "${BIM_MENUNAME}_entry" 2> /dev/null || echo "()")
+	MENUSTR=$(declare -p "${BIM_MENUNAME}_entry" 2> /dev/null || echo "()")
 	declare -x -A MENUDICT=${MENUSTR#*=}
 	MENUDICT["${item/\[X\]/[ ]}"]="${MENUDICT[${item}]}"
 	MENUDICT["${item/\[ \]/[X]}"]="${MENUDICT[${item}]}"
@@ -26,5 +25,14 @@ bim_choice() {
 	
 	CMDSTR="declare -g -x -A ${BIM_MENUNAME}_entry=${MENUSTR#*=}"
 	eval "${CMDSTR}"
+}
+
+
+bim_choice_is_selected() {
+	if [[ "${item}" = *\[X\]* ]]
+	then
+		return 0
+	fi
+	return 1
 }
 
