@@ -11,10 +11,18 @@
 bim_show() {
 	BIM_MENUNAME="${1}"
 	shift
+	BIM_SETUP_FUNC="${1}"
+	shift
+	BIM_CLEANUP_FUNC="${1}"
+	shift
 	RELOAD_MENU="true"
 	while [[ "${RELOAD_MENU}" = "true" ]]
 	do
 		RELOAD_MENU="false"
+		if [[ -n "${BIM_SETUP_FUNC}" ]] 
+		then
+			${BIM_SETUP_FUNC} || echo "setup call: ${BIM_SETUP_FUNC} failed with returncode $?" 
+		fi
 		MENUSTR=$(declare -p "${BIM_MENUNAME}_entry" 2> /dev/null || echo "()")
 		TOPICSTR=$(declare -p "${BIM_MENUNAME}_topic" 2> /dev/null || echo "()")
 		ENABLESTR=$(declare -p "${BIM_MENUNAME}_enable" 2> /dev/null || echo "()")
@@ -101,12 +109,9 @@ selection (? for help) ---> "
 			else
 				if [[ -n ${MENU["${item}"]} ]]
 				then 
-					if [[ -z "${@}" ]]
-					then
-						${MENU["${item}"]} || echo "menu command failed, returncode $?"
-					else
-						${MENU["${item}"]} "${@}"|| echo "menu command failed, returncode $?"
-					fi
+					${MENU["${item}"]} || echo "menu command failed, returncode $?"
+				else
+					echo "I have no configuration abt what to do, aka no menu entry fir ${item}"
 				fi
 			fi
 			# last but not least we do start over with our menu and reload the complete thing 
@@ -114,5 +119,9 @@ selection (? for help) ---> "
 			break
 		done
 	done
+	if [[ -n "${BIM_CLEANUP_FUNC}" ]] 
+	then
+		${BIM_CLEANUP_FUNC} || echo "cleanup call: ${BIM_CLEANUP_FUNC} failed with returncode $?" 
+	fi
 }
 
