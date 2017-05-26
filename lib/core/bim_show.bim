@@ -88,7 +88,9 @@ selection (? for help) ---> "
 				then
 					if [[ -z "${ARGS}" ]]
 					then
+						echo doing: ${REPLYDICT["${REPLY}"]}
 						${REPLYDICT["${REPLY}"]} || echo "reply command failed, returncode $?"
+						echo done: ${REPLYDICT["${REPLY}"]}
 					else
 						${REPLYDICT["${REPLY}"]} "${ARGS[@]}" || echo "reply command failed, returncode $?"
 					fi
@@ -116,7 +118,8 @@ selection (? for help) ---> "
 			fi
 			# last but not least we do start over with our menu and reload the complete thing 
 			RELOAD_MENU="true"
-			break
+			echo finish loop agn
+			break 
 		done
 	done
 	if [[ -n "${BIM_CLEANUP_FUNC}" ]] 
