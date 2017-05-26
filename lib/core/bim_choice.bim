@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# example: 
+#declare -A dashboard_entry+=(
+#	["[X] This is ur 1st test choice"]="bim_test_choice"
+#	["[ ] This is ur 2nd test choice"]="bim_test_choice"
+#)
+
+
+bim_choice() {
+   MENUSTR=$(declare -p "${BIM_MENUNAME}_entry" 2> /dev/null || echo "()")
+	declare -x -A MENUDICT=${MENUSTR#*=}
+	MENUDICT["${item/\[X\]/[ ]}"]="${MENUDICT[${item}]}"
+	MENUDICT["${item/\[ \]/[X]}"]="${MENUDICT[${item}]}"
+	# i did not manage to do unset -v MENUDICT["${item}"]
+	# therefore I copy that dict into a new one via for loop
+	declare -x -A NEWMENUDICT=()
+	for i in "${!MENUDICT[@]}"
+	do
+		if [[ "${i}" != "${item}" ]]
+		then
+			NEWMENUDICT["${i}"]="${MENUDICT[${i}]}"
+		fi
+	done
+   MENUSTR=$(declare -p "NEWMENUDICT" 2> /dev/null || echo "()")
+	
+	CMDSTR="declare -g -x -A ${BIM_MENUNAME}_entry=${MENUSTR#*=}"
+	eval "${CMDSTR}"
+}
+
